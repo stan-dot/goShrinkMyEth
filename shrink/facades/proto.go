@@ -1,16 +1,17 @@
-
-package main
+package proto
 
 import (
 	"context"
 	"log"
 	"time"
 
+	// "github.com/erigontech/erigon/remote"
+	remote "github.com/erigontech/erigon-lib/gointerfaces/remoteproto"
+	txpool "github.com/erigontech/erigon-lib/gointerfaces/txpoolproto"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"github.com/erigontech/interfaces"
-
 )
 
 // TxnData represents transaction data for caching
@@ -30,7 +31,7 @@ type KVClient struct {
 // NewKVClient initializes a new KVClient with gRPC and database connections
 func NewKVClient(grpcAddr string) (*KVClient, error) {
 	// Establish gRPC connection
-	conn, err := grpc.Dial(grpcAddr, grpc.WithInsecure())
+	conn, err := grpc.NewClient(grpcAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
